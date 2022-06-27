@@ -4,11 +4,11 @@
   "scripts": {
     "clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "build": "yarn run tsc --build --verbose",
-    "ws:build": "yarn build",
+    "ci:build": "yarn build",
     "test": "ENVIRONMENT=test yarn jest",
-    "ws:test": "yarn test",
+    "ci:test": "yarn test",
     "lint": "eslint src --max-warnings 0 --ext .js,.ts && prettier --check 'src/**/*.(js|jsx|ts|tsx|json|css)'",
-    "ws:lint": "yarn lint",
+    "ci:lint": "yarn lint",
     "format": "prettier --write 'src/**/*.(js|jsx|ts|tsx|json|css)'"
   },
   "eslintConfig": {
