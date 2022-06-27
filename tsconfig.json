@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "resolveJsonModule": true,
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "**/*.test.ts",
+    "__tests__/**/*",
+    "**/testHelpers.ts",
+    "build/**"
+  ],
+  "typeRoots": [
+    "./src/models",
+    "./types.d.ts",
+    "./node_modules/@types",
+    "../../node_modules/@types"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}

@@ -1,0 +1,9 @@
+name: 'Optic'
+description: 'Run Optic against the current commit'
+inputs:
+  token: # id of input
+    description: "Your organization's Optic token"
+    required: true
+runs:
+  using: 'node16'
+  main: 'build/index.js'
