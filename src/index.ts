@@ -44,7 +44,9 @@ async function runAction(): Promise<void> {
 
 async function verifyInput(): Promise<boolean> {
   if (!token) {
-    core.error("No token provided");
+    core.error(
+      "No token was provided. You can generate a token through our app at https://app.useoptic.com"
+    );
     return false;
   }
 

@@ -58,18 +58,14 @@ async function runAction() {
 }
 async function verifyInput() {
     if (!token) {
-        core.error("No token provided");
+        core.error("No token was provided. You can generate a token through our app at https://app.useoptic.com");
         return false;
     }
     return true;
 }
 async function install() {
     core.info("Installing optic-ci");
-    return execCommand("npm", [
-        "install",
-        "-g",
-        "@useoptic/optic-ci",
-    ]);
+    return execCommand("npm", ["install", "-g", "@useoptic/optic-ci"]);
 }
 async function createContext() {
     core.info("Generating context file");
