@@ -3,14 +3,41 @@ import * as exec from "@actions/exec";
 
 const token = core.getInput("token");
 
+async function execCommand(
+  ...args: Parameters<typeof exec.exec>
+): Promise<boolean> {
+  try {
+    await exec.exec(...args);
+    return true;
+  } catch (e) {
+    if (e instanceof Error) {
+      core.error(e);
+    }
+
+    return false;
+  }
+}
+
 async function runAction(): Promise<void> {
-  const valid = verifyInput();
+  const valid = await verifyInput();
   if (!valid) {
     return;
   }
 
-  const installed = install();
+  const installed = await install();
   if (!installed) {
+    return;
+  }
+
+  const contextCreated = await createContext();
+
+  if (!contextCreated) {
+    return;
+  }
+
+  const comparisonRun = await runComparison();
+
+  if (!comparisonRun) {
     return;
   }
 }
@@ -25,23 +52,30 @@ async function verifyInput(): Promise<boolean> {
 }
 
 async function install() {
-  try {
-    core.info("Installing optic-ci");
+  core.info("Installing optic-ci");
+  return execCommand("npm", [
+    "install",
+    "--location=global",
+    "@useoptic/optic-ci",
+  ]);
+}
 
-    // todo: wrap github's exec with a standard way to capture input and only
-    // show it on error
-    await exec.exec("npm", [
-      "install",
-      "--location=global",
-      "@useoptic/optic-ci",
-    ]);
-  } catch (e) {
-    if (e instanceof Error) {
-      core.error(e);
-    }
+async function createContext(): Promise<boolean> {
+  core.info("Generating context file");
+  return execCommand("optic-ci", [
+    "create-github-context",
+    "--provider=github",
+  ]);
+}
 
-    return false;
-  }
+async function runComparison(): Promise<boolean> {
+  core.info("Running Optic compare");
+
+  return execCommand("optic-ci", ["run"], {
+    env: {
+      OPTIC_TOKEN: token,
+    },
+  });
 }
 
 runAction().then(() => null);
