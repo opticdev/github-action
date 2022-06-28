@@ -21,24 +21,24 @@ async function execCommand(
 async function runAction(): Promise<void> {
   const valid = await verifyInput();
   if (!valid) {
-    return;
+    return process.exit(1);
   }
 
   const installed = await install();
   if (!installed) {
-    return;
+    return process.exit(1);
   }
 
   const contextCreated = await createContext();
 
   if (!contextCreated) {
-    return;
+    return process.exit(1);
   }
 
   const comparisonRun = await runComparison();
 
   if (!comparisonRun) {
-    return;
+    return process.exit(1);
   }
 }
 
@@ -53,11 +53,7 @@ async function verifyInput(): Promise<boolean> {
 
 async function install() {
   core.info("Installing optic-ci");
-  return execCommand("npm", [
-    "install",
-    "--location=global",
-    "@useoptic/optic-ci",
-  ]);
+  return execCommand("npm", ["install", "-g", "@useoptic/optic-ci"]);
 }
 
 async function createContext(): Promise<boolean> {
@@ -78,4 +74,10 @@ async function runComparison(): Promise<boolean> {
   });
 }
 
-runAction().then(() => null);
+runAction()
+  .then(() => {
+    return process.exit(0);
+  })
+  .catch(() => {
+    return process.exit(1);
+  });
