@@ -11,4 +11,4 @@ jobs:
       - name: Run optic compare
         uses: ./
         with:
-          token: 'asdsd' # TODO update this
+          token: ${{ secrets.OPTIC_TOKEN }}

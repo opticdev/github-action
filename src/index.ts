@@ -71,6 +71,7 @@ async function runComparison(): Promise<boolean> {
 
   return execCommand("optic-ci", ["run"], {
     env: {
+      ...process.env,
       OPTIC_TOKEN: token,
     },
   });
