@@ -55,7 +55,11 @@ async function verifyInput(): Promise<boolean> {
 
 async function install() {
   core.info("Installing optic-ci");
-  return execCommand("npm", ["install", "--location=global", "@useoptic/optic-ci"]);
+  return execCommand("npm", [
+    "install",
+    "--location=global",
+    "@useoptic/optic-ci",
+  ]);
 }
 
 async function createContext(): Promise<boolean> {
