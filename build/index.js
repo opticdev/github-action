@@ -33,6 +33,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec = __importStar(__nccwpck_require__(514));
 const token = core.getInput("token");
+const base = core.getInput("base");
 async function execCommand(...args) {
     try {
         await exec.exec(...args);
@@ -87,7 +88,7 @@ async function createContext() {
 }
 async function runComparison() {
     core.info("Running Optic compare");
-    return execCommand("optic-ci", ["run"], {
+    return execCommand("optic-ci", ["run", `--base=${base}`], {
         env: Object.assign(Object.assign({}, process.env), { OPTIC_TOKEN: token }),
     });
 }

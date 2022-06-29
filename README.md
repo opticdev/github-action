@@ -18,4 +18,6 @@ jobs:
         uses: opticdev/github-action@v1
         with:
           token: ${{ secrets.OPTIC_TOKEN }} # Add the secret to your secret manager
+          # optional
+          # base: origin/master # the base git ref to refer to
 ```

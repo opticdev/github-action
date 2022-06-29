@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 
 const token = core.getInput("token");
+const base = core.getInput("base");
 
 async function execCommand(
   ...args: Parameters<typeof exec.exec>
@@ -73,7 +74,7 @@ async function createContext(): Promise<boolean> {
 async function runComparison(): Promise<boolean> {
   core.info("Running Optic compare");
 
-  return execCommand("optic-ci", ["run"], {
+  return execCommand("optic-ci", ["run", `--base=${base}`], {
     env: {
       ...process.env,
       OPTIC_TOKEN: token,
