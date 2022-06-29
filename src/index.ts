@@ -3,38 +3,12 @@ import * as exec from "@actions/exec";
 
 const token = core.getInput("token");
 
-async function runAction(): Promise<void> {
-  const valid = verifyInput();
-  if (!valid) {
-    return;
-  }
-
-  const installed = install();
-  if (!installed) {
-    return;
-  }
-}
-
-async function verifyInput(): Promise<boolean> {
-  if (!token) {
-    core.error("No token provided");
-    return false;
-  }
-
-  return true;
-}
-
-async function install() {
+async function execCommand(
+  ...args: Parameters<typeof exec.exec>
+): Promise<boolean> {
   try {
-    core.info("Installing optic-ci");
-
-    // todo: wrap github's exec with a standard way to capture input and only
-    // show it on error
-    await exec.exec("npm", [
-      "install",
-      "--location=global",
-      "@useoptic/optic-ci",
-    ]);
+    await exec.exec(...args);
+    return true;
   } catch (e) {
     if (e instanceof Error) {
       core.error(e);
@@ -44,4 +18,73 @@ async function install() {
   }
 }
 
-runAction().then(() => null);
+async function runAction(): Promise<void> {
+  const valid = await verifyInput();
+  if (!valid) {
+    return process.exit(1);
+  }
+
+  const installed = await install();
+  if (!installed) {
+    return process.exit(1);
+  }
+
+  const contextCreated = await createContext();
+
+  if (!contextCreated) {
+    return process.exit(1);
+  }
+
+  const comparisonRun = await runComparison();
+
+  if (!comparisonRun) {
+    return process.exit(1);
+  }
+}
+
+async function verifyInput(): Promise<boolean> {
+  if (!token) {
+    core.error(
+      "No token was provided. You can generate a token through our app at https://app.useoptic.com"
+    );
+    return false;
+  }
+
+  return true;
+}
+
+async function install() {
+  core.info("Installing optic-ci");
+  return execCommand("npm", [
+    "install",
+    "--location=global",
+    "@useoptic/optic-ci",
+  ]);
+}
+
+async function createContext(): Promise<boolean> {
+  core.info("Generating context file");
+  return execCommand("optic-ci", [
+    "create-github-context",
+    "--provider=github",
+  ]);
+}
+
+async function runComparison(): Promise<boolean> {
+  core.info("Running Optic compare");
+
+  return execCommand("optic-ci", ["run"], {
+    env: {
+      ...process.env,
+      OPTIC_TOKEN: token,
+    },
+  });
+}
+
+runAction()
+  .then(() => {
+    return process.exit(0);
+  })
+  .catch(() => {
+    return process.exit(1);
+  });
