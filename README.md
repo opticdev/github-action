@@ -18,5 +18,5 @@ jobs:
         uses: opticdev/github-action@v1
         with:
           token: ${{ secrets.OPTIC_TOKEN }} # Add the secret to your secret manager
-          base: ${{ env.GITHUB_BASE_REF }} # the base git ref to refer to
+          base: ${{ github.event.pull_request.base.ref }} # the base git to compare against
 ```
