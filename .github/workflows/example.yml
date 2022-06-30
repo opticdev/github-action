@@ -12,3 +12,4 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.OPTIC_TOKEN }}
+          base: ${{ env.GITHUB_BASE_REF }}
