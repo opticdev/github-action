@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
+import * as github from "@actions/github";
 
 const token = core.getInput("token");
 const base = core.getInput("base");
@@ -29,6 +30,9 @@ async function runAction(): Promise<void> {
   if (!installed) {
     return process.exit(1);
   }
+  if (!(await checkoutBaseBranch())) {
+    return process.exit(1);
+  }
 
   const contextCreated = await createContext();
 
@@ -52,6 +56,20 @@ async function verifyInput(): Promise<boolean> {
   }
 
   return true;
+}
+
+async function checkoutBaseBranch(): Promise<boolean> {
+  const baseBranch = base;
+  const sha = github.context.sha;
+  if (
+    !(await execCommand(`git fetch --no-tags --depth=1 origin ${baseBranch}`))
+  ) {
+    return false;
+  }
+  if (!(await execCommand(`git checkout -b ${baseBranch}`))) {
+    return false;
+  }
+  return await execCommand(`git checkout ${sha}`);
 }
 
 async function install() {
