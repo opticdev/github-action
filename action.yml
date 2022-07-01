@@ -5,8 +5,8 @@ inputs:
     description: "Your organization's Optic token"
     required: true
   base:
-    description: The base ref that you want to compare against. This should be formatted as `remote/branch`, e.g. `origin/master`
-    default: origin/master
+    description: The base branch that you want to run a comparison against. Defaults to master
+    default: master
 runs:
   using: "node16"
   main: "build/index.js"

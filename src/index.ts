@@ -29,6 +29,9 @@ async function runAction(): Promise<void> {
   if (!installed) {
     return process.exit(1);
   }
+  if (!(await checkoutBaseBranch())) {
+    return process.exit(1);
+  }
 
   const contextCreated = await createContext();
 
@@ -50,6 +53,24 @@ async function verifyInput(): Promise<boolean> {
     );
     return false;
   }
+
+  return true;
+}
+
+async function checkoutBaseBranch(): Promise<boolean> {
+  const baseBranch = base;
+  // Fetch the base branch
+  if (
+    !(await execCommand(`git fetch --no-tags --depth=1 origin ${baseBranch}`))
+  ) {
+    return false;
+  }
+  // create branch if not created locally
+  // if this fails, we've already got a base branch, so we can ignore the failure
+  try {
+    await exec.exec(`git branch ${baseBranch}`);
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
 
   return true;
 }
