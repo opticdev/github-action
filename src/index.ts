@@ -66,7 +66,12 @@ async function checkoutBaseBranch(): Promise<boolean> {
     return false;
   }
   // create branch if not created locally
-  await execCommand(`git branch ${baseBranch}`);
+  // if this fails, we've already got a base branch, so we can ignore the failure
+  try {
+    await exec.exec(`git branch ${baseBranch}`);
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+
   return true;
 }
 
