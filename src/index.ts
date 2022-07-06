@@ -1,6 +1,5 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import * as github from "@actions/github";
 
 const token = core.getInput("token");
 const base = core.getInput("base");
@@ -60,21 +59,13 @@ async function verifyInput(): Promise<boolean> {
 
 async function checkoutBaseBranch(): Promise<boolean> {
   const baseBranch = base;
-  const sha = github.context.sha;
   // Fetch the base branch
   if (
     !(await execCommand(`git fetch --no-tags --depth=1 origin ${baseBranch}`))
   ) {
     return false;
   }
-  if (
-    !(await execCommand(
-      `git checkout -f -B ${baseBranch} origin/${baseBranch}`
-    ))
-  ) {
-    return false;
-  }
-  return await execCommand(`git checkout ${sha}`);
+  return await execCommand(`git branch -f ${baseBranch} origin/${baseBranch}`);
 }
 
 async function install() {
