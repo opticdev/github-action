@@ -82,10 +82,7 @@ async function checkoutBaseBranch() {
     if (!(await execCommand(`git fetch --no-tags --depth=1 origin ${baseBranch}`))) {
         return false;
     }
-    if (!(await execCommand(`git checkout origin/${baseBranch}`))) {
-        return false;
-    }
-    if (!(await execCommand(`git checkout -b ${baseBranch}`))) {
+    if (!(await execCommand(`git checkout -f -B ${baseBranch} origin/${baseBranch}`))) {
         return false;
     }
     return await execCommand(`git checkout ${sha}`);
