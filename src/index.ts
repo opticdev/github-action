@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
+import * as github from "@actions/github";
 
 const token = core.getInput("token");
 const base = core.getInput("base");
@@ -59,20 +60,20 @@ async function verifyInput(): Promise<boolean> {
 
 async function checkoutBaseBranch(): Promise<boolean> {
   const baseBranch = base;
+  const sha = github.context.sha;
   // Fetch the base branch
   if (
     !(await execCommand(`git fetch --no-tags --depth=1 origin ${baseBranch}`))
   ) {
     return false;
   }
-  // create branch if not created locally
-  // if this fails, we've already got a base branch, so we can ignore the failure
-  try {
-    await exec.exec(`git branch ${baseBranch}`);
-    // eslint-disable-next-line no-empty
-  } catch (e) {}
-
-  return true;
+  if (!(await execCommand(`git checkout origin/${baseBranch}`))) {
+    return false;
+  }
+  if (!(await execCommand(`git checkout -b ${baseBranch}`))) {
+    return false;
+  }
+  return await execCommand(`git checkout ${sha}`);
 }
 
 async function install() {
