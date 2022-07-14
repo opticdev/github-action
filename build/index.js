@@ -87,7 +87,7 @@ async function install() {
     return execCommand("npm", [
         "install",
         "--location=global",
-        "@useoptic/optic-ci",
+        "@useoptic/optic-ci@0.26.19-1",
     ]);
 }
 async function createContext() {
