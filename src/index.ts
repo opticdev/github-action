@@ -69,17 +69,18 @@ async function checkoutBaseBranch(): Promise<boolean> {
 }
 
 async function install() {
-  core.info("Installing optic-ci");
+  core.info("Installing optic");
   return execCommand("npm", [
     "install",
     "--location=global",
-    "@useoptic/optic-ci",
+    "@useoptic/optic",
   ]);
 }
 
 async function createContext(): Promise<boolean> {
   core.info("Generating context file");
-  return execCommand("optic-ci", [
+  return execCommand("optic", [
+    "cloud",
     "create-github-context",
     "--provider=github",
   ]);
@@ -88,7 +89,7 @@ async function createContext(): Promise<boolean> {
 async function runComparison(): Promise<boolean> {
   core.info("Running Optic compare");
 
-  return execCommand("optic-ci", ["run", `--base=${base}`], {
+  return execCommand("optic", ["cloud", "run", `--base=${base}`], {
     env: {
       ...process.env,
       OPTIC_TOKEN: token,
