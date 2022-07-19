@@ -83,23 +83,24 @@ async function checkoutBaseBranch() {
     return await execCommand(`git branch -f ${baseBranch} origin/${baseBranch}`);
 }
 async function install() {
-    core.info("Installing optic-ci");
+    core.info("Installing optic");
     return execCommand("npm", [
         "install",
         "--location=global",
-        "@useoptic/optic-ci",
+        "@useoptic/optic",
     ]);
 }
 async function createContext() {
     core.info("Generating context file");
-    return execCommand("optic-ci", [
+    return execCommand("optic", [
+        "cloud",
         "create-github-context",
         "--provider=github",
     ]);
 }
 async function runComparison() {
     core.info("Running Optic compare");
-    return execCommand("optic-ci", ["run", `--base=${base}`], {
+    return execCommand("optic", ["cloud", "run", `--base=${base}`], {
         env: Object.assign(Object.assign({}, process.env), { OPTIC_TOKEN: token }),
     });
 }
